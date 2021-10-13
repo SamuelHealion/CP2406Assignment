@@ -1,9 +1,6 @@
 package rainfallanalyser.cp2406assignment;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.*;
 
 import org.apache.commons.csv.*;
 
@@ -49,9 +46,20 @@ public class rainfallAnalyser {
         try {
             Reader reader = new FileReader("./rainfalldata/" + fileName);
 //            System.out.println(pathNames[fileNumber - 1]);
-
+            Iterable<CSVRecord> records = CSVFormat.DEFAULT.withHeader("Product Code", "Bureau of Meteorology station number", "Year", "Month", "Day",
+                    "Rainfall", "Period of Measurement", "Quality").parse(reader);
+            for (CSVRecord record : records) {
+                // Get the data from each row of the Rainfall Data CSV file
+                String year = record.get("Year");
+                String month = record.get("Month");
+                String day = record.get("Day");
+                String rainfall = record.get("Rainfall");
+                System.out.println(day+"/"+month+"/"+year + " received " + rainfall + " millimeters of rain");
+            }
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
