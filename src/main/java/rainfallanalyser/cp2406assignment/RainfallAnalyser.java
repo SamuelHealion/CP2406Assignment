@@ -1,6 +1,7 @@
 package rainfallanalyser.cp2406assignment;
 
 import java.io.*;
+import java.util.Objects;
 
 import org.apache.commons.csv.*;
 
@@ -8,10 +9,7 @@ public class RainfallAnalyser {
 
     /**
      * CP2406 Assignment - Samuel Healion
-     *
-     *
      * This program will get a .csv file containing rainfall data that the user specifies.
-     *
      */
     public static void main(String[] args) {
 
@@ -20,65 +18,77 @@ public class RainfallAnalyser {
         System.out.println("It will then return the extracted Total Monthly Rainfall for the data set");
         System.out.println("as well as the minimum and maximum rainfall that occurred that month.");
 
-
-//        String filename = getRainfallData();
-        String filename = "MountSheridanStationCNS.csv";
-        analyseRainfallData(filename);
+        try {
+//        String filename = getFileName();
+            String filename = "MountSheridanStationCNS.csv";
+            analyseRainfallData(filename);
+        } catch (Exception e) {
+            System.out.println("Error: there was an issue");
+            System.out.println(e.getMessage());
+        }
     }
 
-    private static void analyseRainfallData(String fileName) {
+    private static String getSavePath(String filename) {
+        String[] filenameElements = filename.trim().split("\\.");
+        return "./rainfalldata_analysed/" + filenameElements[0] + "_analysed.csv";
+    }
+
+    private static void analyseRainfallData(String fileName) throws Exception {
+
+
+        Reader reader = new FileReader("./rainfalldata/" + fileName);
+//        Iterable<CSVRecord> records = CSVFormat.DEFAULT.withHeader("Product Code", "Bureau of Meteorology station number", "Year", "Month", "Day",
+//                "Rainfall amount (millimetres)", "Period over which rainfall was measured (days)", "Quality").parse(reader);
+        Iterable<CSVRecord> records = CSVFormat.DEFAULT.withHeader().parse(reader);
+
+        // Set the output file based on the file being analysed
+        TextIO.writeFile(getSavePath(fileName));
+        TextIO.putln("year,month,total,minimum,maximum");
+
+        int year, month, day;
+        double rainfall;
         int currentYear = 0;
-        int currentMonth = 0;
+        int currentMonth = 1;
         double monthlyTotal = 0.0;
         double minRainfall = Double.POSITIVE_INFINITY;
         double maxRainfall = 0.0;
 
-        try {
-            Reader reader = new FileReader("./rainfalldata/" + fileName);
-            Iterable<CSVRecord> records = CSVFormat.DEFAULT.withHeader("Product Code", "Bureau of Meteorology station number", "Year", "Month", "Day",
-                    "Rainfall", "Period of Measurement", "Quality").withSkipHeaderRecord().parse(reader);
+        for (CSVRecord record : records) {
+            // Get the data from each row of the Rainfall Data CSV file
+            String yearText = record.get("Year");
+            String monthText = record.get("Month");
+            String dayText = record.get("Day");
+            String rainfallText = record.get("Rainfall amount (millimetres)");
 
-            for (CSVRecord record : records) {
-                // Get the data from each row of the Rainfall Data CSV file
-                String yearText = record.get("Year");
-                String monthText = record.get("Month");
-                String dayText = record.get("Day");
-                String rainfallText = record.get("Rainfall");
+            // Analyse the data and convert it into the expected output format
+            year = Integer.parseInt(yearText);
+            month = Integer.parseInt(monthText);
+            day = Integer.parseInt(dayText);
 
-                // Analyse the data and convert it into the expected output format
-                try {
-                    int year = Integer.parseInt(yearText);
-                    int month = Integer.parseInt(monthText);
-                    int day = Integer.parseInt(dayText);
-                    double rainfall = Double.parseDouble(rainfallText);
+            // Check if there is data for rainfall, otherwise assume zero
+            rainfall = Objects.equals(rainfallText, "") ? 0 : Double.parseDouble(rainfallText);
 
-                    if (month != currentMonth) {
-//                        System.out.println("Total rainfall for " + currentMonth + "/" + yearText + " is: " + monthlyTotal + " millimeters");
-//                        System.out.println("Maximum rainfall was: " + maxRainfall + " and Minimum rainfall was: " + minRainfall);
-                        System.out.printf("%d,%d,%1.2f,%1.2f,%1.2f\n", year, month, monthlyTotal, minRainfall, maxRainfall);
-
-                        currentYear = year;
-                        currentMonth = month;
-                        monthlyTotal = 0;
-                        maxRainfall = 0.0;
-                        minRainfall = Double.POSITIVE_INFINITY;
-                    } else {
-                        monthlyTotal += rainfall;
-                        if (rainfall > maxRainfall)
-                            maxRainfall = rainfall;
-                        else if (rainfall < minRainfall)
-                            minRainfall = rainfall;
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Error");
-                }
+            // Check to see if it's the next month
+            if (month != currentMonth) {
+                writeMonthsData(monthlyTotal, minRainfall, maxRainfall, currentYear, currentMonth);
+                currentYear = year;
+                currentMonth = month;
+                monthlyTotal = 0;
+                maxRainfall = 0.0;
+                minRainfall = Double.POSITIVE_INFINITY;
             }
-        } catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+
+            // Update the total for the month
+            monthlyTotal += rainfall;
+            if (rainfall > maxRainfall)
+                maxRainfall = rainfall;
+            if (rainfall < minRainfall)
+                minRainfall = rainfall;
         }
+    }
+
+    private static void writeMonthsData(double monthlyTotal, double minRainfall, double maxRainfall, int year, int month) {
+        TextIO.putf("%d,%d,%1.2f,%1.2f,%1.2f\n", year, month, monthlyTotal, minRainfall, maxRainfall);
     }
 
     /**
@@ -86,7 +96,7 @@ public class RainfallAnalyser {
      * Allows the user to pick which data set to analyse from this list.
      * @return Name of the file to be analysed
      */
-    private static String getRainfallData() {
+    private static String getFileName() {
         System.out.println("The files available are:\n");
         File f = new File("./rainfalldata");
         String[] pathNames = f.list();
@@ -113,5 +123,5 @@ public class RainfallAnalyser {
             }
         }
         return fileName;
-    }
+    } // End getFileName
 }
