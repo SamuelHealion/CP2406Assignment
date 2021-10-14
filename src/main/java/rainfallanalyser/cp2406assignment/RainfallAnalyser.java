@@ -5,12 +5,15 @@ import java.util.Objects;
 
 import org.apache.commons.csv.*;
 
+/**
+ * CP2406 Assignment - Samuel Healion
+ * Alpha Version
+ * This program will get rainfall data from a file that the user specifies
+ * and return the analysed data in a format for a visualiser.
+ * This version can only analyse files stored in the rainfalldata directory of the project.
+ */
 public class RainfallAnalyser {
 
-    /**
-     * CP2406 Assignment - Samuel Healion
-     * This program will get a .csv file containing rainfall data that the user specifies.
-     */
     public static void main(String[] args) {
 
         System.out.println("Welcome to the Rainfall Analyser");
@@ -19,9 +22,9 @@ public class RainfallAnalyser {
         System.out.println("as well as the minimum and maximum rainfall that occurred that month.");
 
         try {
-//        String filename = getFileName();
-            String filename = "MountSheridanStationCNS.csv";
+            String filename = getFilename();
             analyseRainfallData(filename);
+            System.out.println(filename + " successfully analysed!");
         } catch (Exception e) {
             System.out.println("Error: there was an issue");
             System.out.println(e.getMessage());
@@ -35,10 +38,7 @@ public class RainfallAnalyser {
 
     private static void analyseRainfallData(String fileName) throws Exception {
 
-
         Reader reader = new FileReader("./rainfalldata/" + fileName);
-//        Iterable<CSVRecord> records = CSVFormat.DEFAULT.withHeader("Product Code", "Bureau of Meteorology station number", "Year", "Month", "Day",
-//                "Rainfall amount (millimetres)", "Period over which rainfall was measured (days)", "Quality").parse(reader);
         Iterable<CSVRecord> records = CSVFormat.DEFAULT.withHeader().parse(reader);
 
         // Set the output file based on the file being analysed
@@ -54,7 +54,7 @@ public class RainfallAnalyser {
         double maxRainfall = 0.0;
 
         for (CSVRecord record : records) {
-            // Get the data from each row of the Rainfall Data CSV file
+            // Get the data from specific rows of the Rainfall Data CSV file
             String yearText = record.get("Year");
             String monthText = record.get("Month");
             String dayText = record.get("Day");
@@ -65,12 +65,18 @@ public class RainfallAnalyser {
             month = Integer.parseInt(monthText);
             day = Integer.parseInt(dayText);
 
+            // Check if the recorded date is valid
+            if ((month < 1 || month > 12) || (day < 1 || day > 31)) {
+                System.out.println("Error: Invalid format for dates");
+                return;
+            }
+
             // Check if there is data for rainfall, otherwise assume zero
             rainfall = Objects.equals(rainfallText, "") ? 0 : Double.parseDouble(rainfallText);
 
             // Check to see if it's the next month
             if (month != currentMonth) {
-                writeMonthsData(monthlyTotal, minRainfall, maxRainfall, currentYear, currentMonth);
+                writeCurrentData(monthlyTotal, minRainfall, maxRainfall, currentMonth, currentYear == 0? year : currentYear);
                 currentYear = year;
                 currentMonth = month;
                 monthlyTotal = 0;
@@ -80,14 +86,14 @@ public class RainfallAnalyser {
 
             // Update the total for the month
             monthlyTotal += rainfall;
-            if (rainfall > maxRainfall)
-                maxRainfall = rainfall;
-            if (rainfall < minRainfall)
-                minRainfall = rainfall;
+            if (rainfall > maxRainfall) maxRainfall = rainfall;
+            if (rainfall < minRainfall) minRainfall = rainfall;
         }
+        // Catch an incomplete month when exiting the for loop
+        writeCurrentData(monthlyTotal, minRainfall, maxRainfall, currentMonth, currentYear);
     }
 
-    private static void writeMonthsData(double monthlyTotal, double minRainfall, double maxRainfall, int year, int month) {
+    private static void writeCurrentData(double monthlyTotal, double minRainfall, double maxRainfall, int month, int year) {
         TextIO.putf("%d,%d,%1.2f,%1.2f,%1.2f\n", year, month, monthlyTotal, minRainfall, maxRainfall);
     }
 
@@ -96,7 +102,7 @@ public class RainfallAnalyser {
      * Allows the user to pick which data set to analyse from this list.
      * @return Name of the file to be analysed
      */
-    private static String getFileName() {
+    private static String getFilename() {
         System.out.println("The files available are:\n");
         File f = new File("./rainfalldata");
         String[] pathNames = f.list();
@@ -109,12 +115,12 @@ public class RainfallAnalyser {
         System.out.println("\nWhich file would you like to analyse? Enter the corresponding number");
 
         int fileNumber;
-        String fileName;
+        String filename;
         while (true) {
             // Check that the selected file is valid. TextIO handles a non-Int input
             try {
                 fileNumber = TextIO.getInt();
-                fileName = pathNames[fileNumber - 1];
+                filename = pathNames[fileNumber - 1];
                 break;
             }
             catch (ArrayIndexOutOfBoundsException e) {
@@ -122,6 +128,7 @@ public class RainfallAnalyser {
                 System.out.println("Please choose another one");
             }
         }
-        return fileName;
-    } // End getFileName
+        return filename;
+    } // End getFilename
 }
+
