@@ -10,6 +10,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+
 /**
  * This file can be used to draw a chart that effectively represents rainfall data.  Just fill in
  * the definition of drawPicture with the code that draws your picture.
@@ -22,32 +24,44 @@ public class RainfallVisualiser extends Application {
      */
     public void drawPicture(GraphicsContext g, int width, int height) {
 
-        // TODO: draw the x-axis and y-axis
+        // Create the x-axis and y-axis
         int border_width = 10;
-
-        g.setStroke(Color.BLUE);
+        g.setStroke(Color.BLACK);
         g.setLineWidth(2);
         g.strokeLine(border_width, border_width, border_width, height - border_width);
         g.strokeLine(border_width, height - border_width, width - border_width, height - border_width);
 
-        // TODO: draw the monthly totals as a bar chart
-        TextIO.getln();
+        TextIO.getln(); // Remove the first line
 
-        double currentXPos = border_width;
-        double barWidth = 5;
-        double scalingFactor = 3;
+        ArrayList<Double> allMonthlyTotals = new ArrayList<>();
 
+        double maxMonthlyTotal = Double.NEGATIVE_INFINITY;
+        // Read the file first and create an array of the monthly totals
         while (!TextIO.eof()) {
             String[] line = TextIO.getln().trim().strip().split(",");
             double monthlyTotal = Double.parseDouble(line[2]);
+            allMonthlyTotals.add(monthlyTotal);
+            if (monthlyTotal > maxMonthlyTotal)
+                maxMonthlyTotal = monthlyTotal;
+        }
 
-            double columnHeight = monthlyTotal / scalingFactor;
+        double xAxisLength = width - 2 * border_width;
+        double yAxisLength = height - 2 * border_width;
+        double currentXPos = border_width;
+        double barWidth = xAxisLength / allMonthlyTotals.size();
 
-            g.setFill(Color.RED);
+        g.setFill(Color.BLUE);
+        g.setLineWidth(0.5);
+
+        for (Double monthlyTotal : allMonthlyTotals) {
+            // Get the height of the column relative to the maximum height
+            double columnHeight = (monthlyTotal / maxMonthlyTotal) * yAxisLength;
+
+            // Draw the rectangle representing the rainfall and draw a black outline
             g.fillRect(currentXPos, height - border_width - columnHeight, barWidth, columnHeight);
+            g.strokeRect(currentXPos, height - border_width - columnHeight, barWidth, columnHeight);
 
             currentXPos += barWidth;
-
         }
     } // end drawPicture()
 
@@ -73,8 +87,8 @@ public class RainfallVisualiser extends Application {
 //        System.out.print("Enter path: ");
 //        var path = TextIO.getln();
 
-        var path = "rainfalldata_analysed/MountSheridanStationCNS_analysed.csv";
-//        var path = "rainfalldata_analysed/IDCJAC0009_031205_1800_Data_analysed.csv";
+//        var path = "rainfalldata_analysed/MountSheridanStationCNS_analysed.csv";
+        var path = "rainfalldata_analysed/IDCJAC0009_031205_1800_Data_analysed.csv";
         TextIO.readFile(path);
         launch();
     }
