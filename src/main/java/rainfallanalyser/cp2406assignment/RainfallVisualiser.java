@@ -1,7 +1,6 @@
 package rainfallanalyser.cp2406assignment;
 
 import javafx.application.Application;
-import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -25,7 +24,7 @@ public class RainfallVisualiser extends Application {
     public void drawPicture(GraphicsContext g, int width, int height) {
 
         // Create the x-axis and y-axis
-        int border_width = 10;
+        int border_width = 20;
         g.setStroke(Color.BLACK);
         g.setLineWidth(2);
         g.strokeLine(border_width, border_width, border_width, height - border_width);
@@ -36,6 +35,8 @@ public class RainfallVisualiser extends Application {
         ArrayList<Double> allMonthlyTotals = new ArrayList<>();
 
         double maxMonthlyTotal = Double.NEGATIVE_INFINITY;
+        int firstYear = 2050;
+        int lastYear = 0;
         // Read the file first and create an array of the monthly totals
         while (!TextIO.eof()) {
             String[] line = TextIO.getln().trim().strip().split(",");
@@ -43,6 +44,12 @@ public class RainfallVisualiser extends Application {
             allMonthlyTotals.add(monthlyTotal);
             if (monthlyTotal > maxMonthlyTotal)
                 maxMonthlyTotal = monthlyTotal;
+
+            int year = Integer.parseInt(line[0]);
+            if (year < firstYear)
+                firstYear = year;
+            else if (year > lastYear)
+                lastYear = year;
         }
 
         double xAxisLength = width - 2 * border_width;
@@ -63,6 +70,17 @@ public class RainfallVisualiser extends Application {
 
             currentXPos += barWidth;
         }
+
+        // Add a title and axis names
+        g.setFill(Color.BLACK);
+        g.setFont(Font.font(24));
+        g.fillText("Rainfall: " + firstYear + " to " + lastYear, width/2.0, border_width);
+
+        g.setFont(Font.font(15));
+        g.fillText("Months", width/2.0, height-5);
+
+        g.rotate(-90);
+        g.fillText("Rainfall (millimeters)",-height/1.6, border_width-5);
     } // end drawPicture()
 
 
@@ -84,11 +102,12 @@ public class RainfallVisualiser extends Application {
 
 
     public static void main(String[] args) {
-//        System.out.print("Enter path: ");
-//        var path = TextIO.getln();
+        System.out.print("Enter path: ");
+        var path = TextIO.getln();
 
+        // Used for testing
 //        var path = "rainfalldata_analysed/MountSheridanStationCNS_analysed.csv";
-        var path = "rainfalldata_analysed/IDCJAC0009_031205_1800_Data_analysed.csv";
+//        var path = "rainfalldata_analysed/IDCJAC0009_031205_1800_Data_analysed.csv";
         TextIO.readFile(path);
         launch();
     }
