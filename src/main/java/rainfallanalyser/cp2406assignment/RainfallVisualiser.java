@@ -21,8 +21,34 @@ public class RainfallVisualiser extends Application {
      * of the drawing area, in pixels.
      */
     public void drawPicture(GraphicsContext g, int width, int height) {
+
         // TODO: draw the x-axis and y-axis
+        int border_width = 10;
+
+        g.setStroke(Color.BLUE);
+        g.setLineWidth(2);
+        g.strokeLine(border_width, border_width, border_width, height - border_width);
+        g.strokeLine(border_width, height - border_width, width - border_width, height - border_width);
+
         // TODO: draw the monthly totals as a bar chart
+        TextIO.getln();
+
+        double currentXPos = border_width;
+        double barWidth = 5;
+        double scalingFactor = 3;
+
+        while (!TextIO.eof()) {
+            String[] line = TextIO.getln().trim().strip().split(",");
+            double monthlyTotal = Double.parseDouble(line[2]);
+
+            double columnHeight = monthlyTotal / scalingFactor;
+
+            g.setFill(Color.RED);
+            g.fillRect(currentXPos, height - border_width - columnHeight, barWidth, columnHeight);
+
+            currentXPos += barWidth;
+
+        }
     } // end drawPicture()
 
 
@@ -48,6 +74,7 @@ public class RainfallVisualiser extends Application {
 //        var path = TextIO.getln();
 
         var path = "rainfalldata_analysed/MountSheridanStationCNS_analysed.csv";
+//        var path = "rainfalldata_analysed/IDCJAC0009_031205_1800_Data_analysed.csv";
         TextIO.readFile(path);
         launch();
     }
