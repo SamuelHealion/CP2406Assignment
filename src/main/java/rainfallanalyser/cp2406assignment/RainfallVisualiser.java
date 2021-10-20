@@ -74,7 +74,7 @@ public class RainfallVisualiser extends Application {
         // Add a title and axis names
         g.setFill(Color.BLACK);
         g.setFont(Font.font(24));
-        g.fillText("Rainfall: " + firstYear + " to " + lastYear, width/2.0, border_width);
+        g.fillText("Rainfall: " + firstYear + " to " + lastYear, width/2.5, border_width);
 
         g.setFont(Font.font(15));
         g.fillText("Months", width/2.0, height-5);
@@ -86,7 +86,7 @@ public class RainfallVisualiser extends Application {
 
     //------ Implementation details: DO NOT EDIT THIS ------
     public void start(Stage stage) {
-        int width = 218 * 6 + 40;
+        int width = 200 * 6 + 40;
         int height = 500;
         Canvas canvas = new Canvas(width, height);
         drawPicture(canvas.getGraphicsContext2D(), width, height);
@@ -102,12 +102,12 @@ public class RainfallVisualiser extends Application {
 
 
     public static void main(String[] args) {
-        System.out.print("Enter path: ");
-        var path = TextIO.getln();
+//        System.out.print("Enter path: ");
+//        var path = TextIO.getln();
 
         // Used for testing
 //        var path = "rainfalldata_analysed/MountSheridanStationCNS_analysed.csv";
-//        var path = "rainfalldata_analysed/IDCJAC0009_031205_1800_Data_analysed.csv";
+        var path = "rainfalldata_analysed/IDCJAC0009_031205_1800_Data_analysed.csv";
         TextIO.readFile(path);
         launch();
     }
