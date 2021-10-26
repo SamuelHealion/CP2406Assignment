@@ -1,6 +1,8 @@
 package rainfallanalyser.cp2406assignment;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -56,6 +58,10 @@ public class RainfallAnalyser {
         }
     }
 
+    /**
+     * Load a file to be analysed and create an ArrayList representing rainfall data for that csv file.
+     * Uses the Commons CSV package from Apache (https://commons.apache.org/proper/commons-csv/)
+     */
     private static ArrayList<String> analyseRainfallData(String fileName) throws Exception {
 
         // Check if the file is empty
@@ -98,8 +104,9 @@ public class RainfallAnalyser {
             // Check if there is data for rainfall, otherwise assume zero
             rainfall = Objects.equals(rainfallText, "") ? 0 : Double.parseDouble(rainfallText);
 
-            // Check to see if it's the next month
+            // Check to see if it's the next month. If it is the next month, save the data and reset the totals/values
             if (month != currentMonth) {
+                // Check if it is the first year before saving the data
                 rainfallData.add(writeCurrentData(monthlyTotal, minRainfall, maxRainfall, currentMonth, currentYear == 0? year : currentYear));
                 currentYear = year;
                 currentMonth = month;
@@ -118,6 +125,9 @@ public class RainfallAnalyser {
         return rainfallData;
     }
 
+    /**
+     * Return a String representation of the months data
+     */
     private static String writeCurrentData(double monthlyTotal, double minRainfall, double maxRainfall, int month, int year) {
         return String.format("%d,%d,%1.2f,%1.2f,%1.2f", year, month, monthlyTotal, minRainfall, maxRainfall);
     }
@@ -125,7 +135,6 @@ public class RainfallAnalyser {
     /**
      * Get a list of available rainfall data sets to be analysed.
      * Allows the user to pick which data set to analyse from this list.
-     * @return Name of the file to be analysed
      */
     private static String getFilename() {
         System.out.println("\nThe files available are:");
@@ -159,6 +168,9 @@ public class RainfallAnalyser {
         return filename;
     } // End getFilename
 
+    /**
+     * Return the path for an analysed rainfall data file
+     */
     private static String getSavePath(String filename) {
         String[] filenameElements = filename.trim().split("\\.");
         return "src/main/resources/rainfalldata_analysed/" + filenameElements[0] + "_analysed.csv";

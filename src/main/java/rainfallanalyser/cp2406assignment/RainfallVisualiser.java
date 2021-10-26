@@ -12,8 +12,11 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 /**
- * This file can be used to draw a chart that effectively represents rainfall data.  Just fill in
- * the definition of drawPicture with the code that draws your picture.
+ * CP2406 Assignment - Samuel Healion
+ * Alpha Version
+ * Based off of the supplied starter code for the assignment.
+ * The drawPicture() class was the only code that was changed for this version of the project.
+ * Requires the user to specify the path for the analysed rainfall data.
  */
 public class RainfallVisualiser extends Application {
 
@@ -106,8 +109,8 @@ public class RainfallVisualiser extends Application {
         var path = TextIO.getln();
 
         // Used for testing
-//        var path = "rainfalldata_analysed/MountSheridanStationCNS_analysed.csv";
-//        var path = "rainfalldata_analysed/IDCJAC0009_031205_1800_Data_analysed.csv";
+//        var path = "src/main/resources/rainfalldata_analysed/MountSheridanStationCNS_analysed.csv";
+//        var path = "src/main/resources/rainfalldata_analysed/IDCJAC0009_031205_1800_Data_analysed.csv";
         TextIO.readFile(path);
         launch();
     }
