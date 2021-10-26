@@ -115,4 +115,4 @@ public class RainfallVisualiser extends Application {
         launch();
     }
 
-} // end SimpleGraphicsStarter
+} // end RainfallVisualiser
