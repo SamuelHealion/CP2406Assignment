@@ -1,4 +1,4 @@
-package rainfallanalyser.cp2406assignment;
+package rainfallanalyser.cp2406assignment_alpha;
 
 import javafx.application.Application;
 import javafx.scene.Scene;

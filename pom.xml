@@ -61,7 +61,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                rainfallanalyser.cp2406assignment/rainfallanalyser.cp2406assignment.HelloApplication
+                                rainfallanalyser.cp2406assignment/rainfallanalyser.cp2406assignment_alpha.HelloApplication
                             </mainClass>
                         </configuration>
                     </execution>

@@ -1,4 +1,4 @@
-package rainfallanalyser.cp2406assignment;
+package rainfallanalyser.cp2406assignment_alpha;
 
 import javax.swing.*;
 import java.io.*;

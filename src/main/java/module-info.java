@@ -5,6 +5,6 @@ module rainfallanalyser.cp2406assignment {
     requires commons.csv;
 
 
-    opens rainfallanalyser.cp2406assignment to javafx.fxml;
-    exports rainfallanalyser.cp2406assignment;
+    opens rainfallanalyser.cp2406assignment_alpha to javafx.fxml;
+    exports rainfallanalyser.cp2406assignment_alpha;
 }

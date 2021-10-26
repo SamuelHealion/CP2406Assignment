@@ -1,4 +1,4 @@
-package rainfallanalyser.cp2406assignment;
+package rainfallanalyser.cp2406assignment_alpha;
 
 import java.io.File;
 import java.io.FileReader;
