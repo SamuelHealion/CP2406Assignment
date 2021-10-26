@@ -102,12 +102,12 @@ public class RainfallVisualiser extends Application {
 
 
     public static void main(String[] args) {
-//        System.out.print("Enter path: ");
-//        var path = TextIO.getln();
+        System.out.print("Enter path: ");
+        var path = TextIO.getln();
 
         // Used for testing
 //        var path = "rainfalldata_analysed/MountSheridanStationCNS_analysed.csv";
-        var path = "rainfalldata_analysed/IDCJAC0009_031205_1800_Data_analysed.csv";
+//        var path = "rainfalldata_analysed/IDCJAC0009_031205_1800_Data_analysed.csv";
         TextIO.readFile(path);
         launch();
     }
