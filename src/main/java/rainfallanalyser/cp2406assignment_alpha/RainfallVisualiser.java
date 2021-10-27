@@ -17,6 +17,8 @@ import java.util.ArrayList;
  * Based off of the supplied starter code for the assignment.
  * The drawPicture() class was the only code that was changed for this version of the project.
  * Requires the user to specify the path for the analysed rainfall data.
+ *
+ * See https://github.com/SamuelHealion/CP2406Assignment_Alpha for the project repository
  */
 public class RainfallVisualiser extends Application {
 

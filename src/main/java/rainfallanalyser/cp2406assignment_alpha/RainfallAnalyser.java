@@ -14,6 +14,8 @@ import org.apache.commons.csv.*;
  * This program will get rainfall data from a file that the user specifies
  * and return the analysed data in a format for a visualiser.
  * This version can only analyse files stored in the rainfalldata directory of the project.
+ *
+ * See https://github.com/SamuelHealion/CP2406Assignment_Alpha for the project repository
  */
 public class RainfallAnalyser {
 
